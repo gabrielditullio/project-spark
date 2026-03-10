@@ -29,24 +29,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   });
 
   async function loadMemberData(userId: string) {
-    const { data: member, error: memberError } = await supabase
+    const { data: memberData, error: memberError } = await supabase
       .from('members')
       .select('*')
       .eq('user_id', userId)
       .limit(1)
       .single();
 
-    if (memberError || !member) {
+    if (memberError || !memberData) {
       return { member: null, organization: null };
     }
 
-    const { data: organization } = await supabase
+    const member = memberData as unknown as Member;
+
+    const { data: orgData } = await supabase
       .from('organizations')
       .select('*')
       .eq('id', member.organization_id)
       .single();
 
-    return { member: member as Member, organization: organization as Organization | null };
+    return { member, organization: (orgData as unknown as Organization) ?? null };
   }
 
   useEffect(() => {

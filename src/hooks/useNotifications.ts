@@ -15,7 +15,7 @@ export function useNotifications() {
         .order('created_at', { ascending: false })
         .limit(50);
       if (error) throw error;
-      return data as Notification[];
+      return (data ?? []) as unknown as Notification[];
     },
   });
 
@@ -42,7 +42,7 @@ export function useNotifications() {
     mutationFn: async (notificationId: string) => {
       const { error } = await supabase
         .from('notifications')
-        .update({ read_at: new Date().toISOString() })
+        .update({ read_at: new Date().toISOString() } as never)
         .eq('id', notificationId);
       if (error) throw error;
     },
@@ -57,7 +57,7 @@ export function useNotifications() {
       if (unreadIds.length === 0) return;
       const { error } = await supabase
         .from('notifications')
-        .update({ read_at: new Date().toISOString() })
+        .update({ read_at: new Date().toISOString() } as never)
         .in('id', unreadIds);
       if (error) throw error;
     },

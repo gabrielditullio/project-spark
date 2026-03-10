@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { Users, DollarSign, MessageSquare, TrendingUp, Calendar } from 'lucide-react';
+import type { Activity } from '@/types/database';
 
 interface DashboardStats {
   totalContacts: number;
@@ -26,7 +27,7 @@ export default function DashboardPage() {
         supabase.from('activities').select('id', { count: 'exact', head: true }).is('completed_at', null),
       ]);
 
-      const totalDealValue = deals.data?.reduce((sum, d) => sum + Number(d.value), 0) ?? 0;
+      const totalDealValue = (deals.data as unknown as Array<{ value: number }>)?.reduce((sum, d) => sum + Number(d.value), 0) ?? 0;
 
       return {
         totalContacts: contacts.count ?? 0,
@@ -89,6 +90,11 @@ export default function DashboardPage() {
   );
 }
 
+interface ActivityWithRelations extends Activity {
+  deal: { title: string } | null;
+  contact: { name: string } | null;
+}
+
 function PendingActivities() {
   const { data: activities, isLoading } = useQuery({
     queryKey: ['dashboard-activities'],
@@ -100,7 +106,7 @@ function PendingActivities() {
         .order('due_date', { ascending: true, nullsFirst: false })
         .limit(5);
       if (error) throw error;
-      return data;
+      return (data ?? []) as unknown as ActivityWithRelations[];
     },
   });
 
@@ -149,7 +155,7 @@ function PendingActivities() {
               <p className="text-sm font-medium text-foreground truncate">{activity.title}</p>
               <p className="text-xs text-muted-foreground">
                 {typeLabels[activity.type] || activity.type}
-                {activity.deal && ` · ${(activity.deal as { title: string }).title}`}
+                {activity.deal && ` · ${activity.deal.title}`}
               </p>
             </div>
             <span className={`text-xs font-medium ${dateDisplay.color} whitespace-nowrap ml-4`}>
