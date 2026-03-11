@@ -6,6 +6,7 @@ import AppLayout from '@/components/layout/AppLayout';
 import LoginPage from '@/pages/LoginPage';
 import DashboardPage from '@/pages/DashboardPage';
 import PlaceholderPage from '@/pages/PlaceholderPage';
+import SettingsPage from '@/pages/SettingsPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
