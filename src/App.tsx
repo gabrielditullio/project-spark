@@ -52,7 +52,7 @@ export default function App() {
               <Route path="pipeline" element={<PlaceholderPage title="Pipeline" description="Visualize e gerencie seus deals." />} />
               <Route path="inbox" element={<PlaceholderPage title="Inbox" description="Atenda seus clientes em tempo real." />} />
               <Route path="automacoes" element={<PlaceholderPage title="Automações" description="Crie workflows automatizados." />} />
-              <Route path="configuracoes" element={<PlaceholderPage title="Configurações" description="Configure seu CRM." />} />
+              <Route path="configuracoes" element={<SettingsPage />} />
             </Route>
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
