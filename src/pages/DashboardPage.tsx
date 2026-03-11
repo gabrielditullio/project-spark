@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { Link } from 'react-router-dom';
 import { Users, DollarSign, MessageSquare, TrendingUp, Calendar } from 'lucide-react';
 import type { Activity } from '@/types/database';
 
@@ -59,7 +60,7 @@ export default function DashboardPage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {cards.map((card) => (
-          <a key={card.title} href={card.href} className="bg-card rounded-xl border border-border p-5 hover:shadow-md transition-shadow">
+          <Link key={card.title} to={card.href} className="bg-card rounded-xl border border-border p-5 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between">
               <div className={`w-10 h-10 rounded-lg ${card.color} flex items-center justify-center`}>
                 <card.icon className="w-5 h-5" />
@@ -73,7 +74,7 @@ export default function DashboardPage() {
               )}
               <p className="text-sm text-muted-foreground mt-1">{card.title}</p>
             </div>
-          </a>
+          </Link>
         ))}
       </div>
 

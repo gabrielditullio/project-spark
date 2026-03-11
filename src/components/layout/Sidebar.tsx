@@ -23,9 +23,17 @@ const navItems = [
   { to: '/automacoes', icon: Zap, label: 'Automações' },
 ];
 
-export default function Sidebar() {
+interface SidebarProps {
+  onNavigate?: () => void;
+}
+
+export default function Sidebar({ onNavigate }: SidebarProps) {
   const { member, organization, signOut } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
+
+  const handleNavClick = () => {
+    if (onNavigate) onNavigate();
+  };
 
   return (
     <aside
@@ -47,7 +55,7 @@ export default function Sidebar() {
         )}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="p-1.5 rounded-md hover:bg-gray-800 transition-colors"
+          className="p-1.5 rounded-md hover:bg-gray-800 transition-colors hidden md:block"
           title={collapsed ? 'Expandir menu' : 'Recolher menu'}
         >
           <ChevronLeft className={cn('w-4 h-4 transition-transform', collapsed && 'rotate-180')} />
@@ -60,6 +68,7 @@ export default function Sidebar() {
             key={item.to}
             to={item.to}
             end={item.to === '/'}
+            onClick={handleNavClick}
             className={({ isActive }) =>
               cn(
                 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
@@ -77,6 +86,7 @@ export default function Sidebar() {
       <div className="border-t border-gray-800 p-2 space-y-1">
         <NavLink
           to="/configuracoes"
+          onClick={handleNavClick}
           className={({ isActive }) =>
             cn(
               'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',

@@ -93,7 +93,7 @@ export default function IntegrationCard({ provider, existingConfig, isAdmin, isS
   const handleSave = () => { onSave(provider, formValues as ProviderConfig, isActive); };
   const handleFieldChange = (key: string, value: string) => { setFormValues((prev) => ({ ...prev, [key]: value })); };
 
-  const supabaseUrl = 'https://oviycfskyptjnseiztux.supabase.co';
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://oviycfskyptjnseiztux.supabase.co';
   const webhookMap: Record<IntegrationProvider, string> = {
     manychat: `${supabaseUrl}/functions/v1/manychat-webhook`,
     zenvia_voice: `${supabaseUrl}/functions/v1/voip-webhook`,

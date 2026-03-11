@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useQueryClient } from '@tanstack/react-query';
 import type { User, Session } from '@supabase/supabase-js';
 import type { Member, Organization } from '@/types/database';
 
@@ -27,6 +28,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     organization: null,
     isLoading: true,
   });
+
+  const queryClient = useQueryClient();
 
   async function loadMemberData(userId: string) {
     const { data: memberData, error: memberError } = await supabase
@@ -104,10 +107,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     try {
+      // Limpar todo o cache do React Query antes de sair
+      queryClient.clear();
       await supabase.auth.signOut();
     } catch (error) {
       console.error('Erro ao fazer logout:', error);
     }
+    // Garantir que o state é limpo mesmo se signOut falhar
     setState({ user: null, session: null, member: null, organization: null, isLoading: false });
     window.location.href = '/login';
   };
