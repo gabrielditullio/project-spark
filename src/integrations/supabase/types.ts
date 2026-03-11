@@ -218,6 +218,92 @@ export type Database = {
           },
         ]
       }
+      call_logs: {
+        Row: {
+          contact_id: string | null
+          created_at: string | null
+          deal_id: string | null
+          direction: string
+          duration_seconds: number | null
+          ended_at: string | null
+          external_call_id: string | null
+          id: string
+          member_id: string
+          notes: string | null
+          organization_id: string
+          phone_from: string
+          phone_to: string
+          recording_url: string | null
+          started_at: string | null
+          status: string
+        }
+        Insert: {
+          contact_id?: string | null
+          created_at?: string | null
+          deal_id?: string | null
+          direction: string
+          duration_seconds?: number | null
+          ended_at?: string | null
+          external_call_id?: string | null
+          id?: string
+          member_id: string
+          notes?: string | null
+          organization_id: string
+          phone_from: string
+          phone_to: string
+          recording_url?: string | null
+          started_at?: string | null
+          status?: string
+        }
+        Update: {
+          contact_id?: string | null
+          created_at?: string | null
+          deal_id?: string | null
+          direction?: string
+          duration_seconds?: number | null
+          ended_at?: string | null
+          external_call_id?: string | null
+          id?: string
+          member_id?: string
+          notes?: string | null
+          organization_id?: string
+          phone_from?: string
+          phone_to?: string
+          recording_url?: string | null
+          started_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "call_logs_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "call_logs_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "deals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "call_logs_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "call_logs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       companies: {
         Row: {
           cnpj: string | null
@@ -264,6 +350,7 @@ export type Database = {
       }
       contacts: {
         Row: {
+          activecampaign_id: string | null
           assigned_to: string | null
           company_id: string | null
           created_at: string | null
@@ -272,6 +359,7 @@ export type Database = {
           email: string | null
           engagement_score: number | null
           id: string
+          manychat_subscriber_id: string | null
           name: string
           organization_id: string
           phone: string | null
@@ -280,6 +368,7 @@ export type Database = {
           whatsapp: string | null
         }
         Insert: {
+          activecampaign_id?: string | null
           assigned_to?: string | null
           company_id?: string | null
           created_at?: string | null
@@ -288,6 +377,7 @@ export type Database = {
           email?: string | null
           engagement_score?: number | null
           id?: string
+          manychat_subscriber_id?: string | null
           name: string
           organization_id: string
           phone?: string | null
@@ -296,6 +386,7 @@ export type Database = {
           whatsapp?: string | null
         }
         Update: {
+          activecampaign_id?: string | null
           assigned_to?: string | null
           company_id?: string | null
           created_at?: string | null
@@ -304,6 +395,7 @@ export type Database = {
           email?: string | null
           engagement_score?: number | null
           id?: string
+          manychat_subscriber_id?: string | null
           name?: string
           organization_id?: string
           phone?: string | null
@@ -341,6 +433,7 @@ export type Database = {
           channel: string
           contact_id: string
           created_at: string | null
+          external_id: string | null
           id: string
           last_message_at: string | null
           organization_id: string
@@ -353,6 +446,7 @@ export type Database = {
           channel?: string
           contact_id: string
           created_at?: string | null
+          external_id?: string | null
           id?: string
           last_message_at?: string | null
           organization_id: string
@@ -365,6 +459,7 @@ export type Database = {
           channel?: string
           contact_id?: string
           created_at?: string | null
+          external_id?: string | null
           id?: string
           last_message_at?: string | null
           organization_id?: string
@@ -498,6 +593,47 @@ export type Database = {
             columns: ["stage_id"]
             isOneToOne: false
             referencedRelation: "pipeline_stages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      integration_configs: {
+        Row: {
+          config: Json
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          organization_id: string
+          provider: string
+          updated_at: string | null
+          webhook_secret: string | null
+        }
+        Insert: {
+          config?: Json
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          organization_id: string
+          provider: string
+          updated_at?: string | null
+          webhook_secret?: string | null
+        }
+        Update: {
+          config?: Json
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          organization_id?: string
+          provider?: string
+          updated_at?: string | null
+          webhook_secret?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "integration_configs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -766,6 +902,56 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "quick_replies_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sync_logs: {
+        Row: {
+          created_at: string | null
+          direction: string
+          entity_id: string | null
+          entity_type: string
+          error_message: string | null
+          external_id: string | null
+          id: string
+          organization_id: string
+          payload: Json | null
+          provider: string
+          status: string
+        }
+        Insert: {
+          created_at?: string | null
+          direction: string
+          entity_id?: string | null
+          entity_type: string
+          error_message?: string | null
+          external_id?: string | null
+          id?: string
+          organization_id: string
+          payload?: Json | null
+          provider: string
+          status?: string
+        }
+        Update: {
+          created_at?: string | null
+          direction?: string
+          entity_id?: string | null
+          entity_type?: string
+          error_message?: string | null
+          external_id?: string | null
+          id?: string
+          organization_id?: string
+          payload?: Json | null
+          provider?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sync_logs_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
