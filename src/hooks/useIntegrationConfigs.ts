@@ -1,8 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 
 export type IntegrationProvider = 'manychat' | 'zenvia_voice' | 'activecampaign';
-
 export type ProviderConfig = Record<string, string>;
 
 export interface IntegrationConfig {
@@ -17,26 +17,11 @@ export interface IntegrationConfig {
 }
 
 export function useIntegrationConfigs() {
+  const { member, organization } = useAuth();
   const queryClient = useQueryClient();
 
-  const { data: memberData } = useQuery({
-    queryKey: ['current-member-for-config'],
-    queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Não autenticado');
-      const { data, error } = await supabase
-        .from('members')
-        .select('id, organization_id, role')
-        .eq('user_id', user.id)
-        .limit(1)
-        .single();
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  const organizationId = memberData?.organization_id;
-  const isAdmin = memberData?.role === 'owner' || memberData?.role === 'admin';
+  const organizationId = organization?.id;
+  const isAdmin = member?.role === 'owner' || member?.role === 'admin';
 
   const query = useQuery({
     queryKey: ['integration-configs', organizationId],
@@ -54,9 +39,7 @@ export function useIntegrationConfigs() {
 
   const upsertConfig = useMutation({
     mutationFn: async ({
-      provider,
-      config,
-      is_active,
+      provider, config, is_active,
     }: {
       provider: IntegrationProvider;
       config: ProviderConfig;
